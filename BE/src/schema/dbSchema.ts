@@ -1,20 +1,21 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
+import { IUser, IContent } from "../types/dbTypes.ts";
 
 //TODO:  Index the DB
-const userSchema = new Schema({
-  username: { type: String, unique: true },
-  password: String,
+const userSchema = new Schema<IUser>({
   name: String,
-  email: { type: String, unique: true },
-  content: [{ type: String, ref: Content }],
+  username: { type: String, unique: true, required: true },
+  password: String,
+  email: { type: String, unique: true, required: true },
+  content: [{ type: String, ref: "Content" }],
 });
 
-const contentSchema = new Schema({
-  title: String,
+const contentSchema = new Schema<IContent>({
+  title: { String, required: true },
   link: String,
-  user: { type: ObjectId, ref: User },
+  user: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
-export const User = mongoose.model("User", userSchema);
-export const Content = mongoose.model("Content", contentSchema);
+export const User = mongoose.model<IUser>("User", userSchema);
+export const Content = mongoose.model<IContent>("Content", contentSchema);
