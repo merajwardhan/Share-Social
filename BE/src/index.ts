@@ -20,10 +20,7 @@ app.post("/api/v1/signup", async (req: Request, res: Response): Response => {
 
     const hashedPassword: string = await argon2.hash(userResult.data?.password);
   } catch (e) {
-    res.status(400).json({
-      message: "Something went wrong",
-      Error: e,
-    });
+    res.status(400).json({ message: "Something went wrong", Error: e });
   }
 });
 
