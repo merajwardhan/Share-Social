@@ -2,14 +2,13 @@
 
 import "dotenv/config";
 import express from "express";
-import * as z from "zod";
 import { userSchema } from "./schema/zSchema.js";
+import type { IUser, IContent } from "./types/dbTypes.js";
 import * as argon2 from "argon2";
 import { User, Content } from "./schema/dbSchema.js";
 
 const app = express();
 app.use(express.json());
-type UserType = z.infer<typeof userSchema>;
 
 app.post("/api/v1/signup", async (req: Request, res: Response) => {
   try {
@@ -22,35 +21,46 @@ app.post("/api/v1/signup", async (req: Request, res: Response) => {
     }
 
     //TODO: call db to check if user exists or not
-    const userExists: UserType = await User.findOne({
-      username: userResult.data.username,
-      email: userResult.data.email,
+    const userExists: IUser | null = await User.findOne({
+      $or: [
+        { username: userResult.data.username },
+        { email: userResult.data.email },
+      ],
     }).exec();
     //TODO: what if the email exists and username doesn't or vice versa
 
     if (userExists) {
+      if (
+        userExists.email === userResult.data.email &&
+        userExists.username === userResult.data.email
+      )
+        return res.status(409).json({
+          message: "User already exists with this email and username",
+        });
+
+      if (userExists.email === userResult.data.email)
+        return res
+          .status(409)
+          .json({ message: "User with this email already exists!" });
+
       return res
-        .status(403)
-        .json({ message: "User already exists with this email or username" });
+        .status(409)
+        .json({ message: "User with this username already exists!" });
     }
 
     const hashedPassword: string = await argon2.hash(userResult.data?.password);
 
-    const userCreated: UserType = await User.create({
+    await User.create({
       name: userResult.data.name,
       username: userResult.data.username,
       password: hashedPassword,
       email: userResult.data.email,
-    });
+    }).exec();
 
-    if (userCreated) {
-      return res.status(200).json({ message: "User signed up successfully!" });
-    } else
-      return res
-        .status(400)
-        .json({ message: "Something went wrong while user creation!" });
+    return res.status(200).json({ message: "User signed up successfully!" });
   } catch (e) {
-    return res.status(500).json({ message: "Something went wrong", Error: e });
+    console.error("Signup endpoint error = " + e);
+    return res.status(500).json({ message: "Something went wrong" });
   }
 });
 
