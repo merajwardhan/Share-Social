@@ -3,6 +3,10 @@ import * as z from "zod";
 //username schema and password schema
 
 export const userSchema = z.object({
+  name: z
+    .string()
+    .min(3, { message: "Name must be at least 3 characters long!" })
+    .max(30, { message: "Name cannot be more then 30 characters!" }),
   username: z
     .string()
     .min(3, { message: "Password must contain at least 3 characters." })
@@ -17,4 +21,5 @@ export const userSchema = z.object({
     .regex(/[^A-Za-z0-9]/, {
       message: "Must contain at least one special character",
     }),
+  email: z.email({ message: "Incorrect email format!" }),
 });
