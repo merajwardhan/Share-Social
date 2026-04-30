@@ -4,9 +4,9 @@ import type { IUser, IContent } from "../types/dbTypes.js";
 
 //TODO:  Index the DB
 const userSchema = new Schema<IUser>({
-  name: String,
+  name: { String, required: true },
   username: { type: String, unique: true, required: true },
-  password: String,
+  password: { String, required: true },
   email: { type: String, unique: true, required: true },
   content: [{ type: Schema.Types.ObjectId, ref: "Content" }],
 });
