@@ -8,9 +8,8 @@ const userSchema = new Schema<IUser>({
   username: { type: String, unique: true, required: true },
   password: String,
   email: { type: String, unique: true, required: true },
-  content: [{ type: String, ref: "Content" }],
+  content: [{ type: Schema.Types.ObjectId, ref: "Content" }],
 });
-//TODO: Check if we have to always provide the required fields we ever have to update the document.
 
 const contentSchema = new Schema<IContent>({
   title: { String, required: true },
