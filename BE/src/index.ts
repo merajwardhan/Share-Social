@@ -10,9 +10,14 @@ import { User, Content } from "./schema/dbSchema.js";
 
 const app = express();
 app.use(express.json());
-await mongoose
-  .connect(`${process.env.MONGO_URL}`)
-  .then(() => console.log("Connected to mongo successfully!"));
+
+try {
+  await mongoose
+    .connect(`${process.env.MONGO_URL}`)
+    .then(() => console.log("Connected to mongo successfully!"));
+} catch (e) {
+  console.error("MongoDB connection failed: " + e);
+}
 
 app.post("/api/v1/signup", async (req, res) => {
   try {
