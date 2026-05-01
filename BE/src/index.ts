@@ -2,6 +2,7 @@
 
 import "dotenv/config";
 import express from "express";
+import mongoose from "mongoose";
 import { userSchema } from "./schema/zSchema.js";
 import type { IUser, IContent } from "./types/dbTypes.js";
 import * as argon2 from "argon2";
@@ -9,6 +10,9 @@ import { User, Content } from "./schema/dbSchema.js";
 
 const app = express();
 app.use(express.json());
+await mongoose
+  .connect("mongodb://127.0.0.1:27017/Share_Social")
+  .then(() => console.log("Connected to mongo successfully!"));
 
 app.post("/api/v1/signup", async (req: Request, res: Response) => {
   try {
