@@ -4,7 +4,6 @@ import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
 import { userSchema } from "./schema/zSchema.js";
-import type { IUser, IContent } from "./types/dbTypes.js";
 import * as argon2 from "argon2";
 import { User, Content } from "./schema/dbSchema.js";
 
@@ -29,14 +28,12 @@ app.post("/api/v1/signup", async (req, res) => {
         .json({ message: "Error in user inputs", error: userResult.error });
     }
 
-    //TODO: call db to check if user exists or not
-    const userExists: IUser | null = await User.findOne({
+    const userExists = await User.findOne({
       $or: [
         { username: userResult.data.username },
         { email: userResult.data.email },
       ],
     }).exec();
-    //TODO: what if the email exists and username doesn't or vice versa
 
     if (userExists) {
       if (
