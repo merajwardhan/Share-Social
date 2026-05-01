@@ -14,7 +14,7 @@ await mongoose
   .connect(`${process.env.MONGO_URL}`)
   .then(() => console.log("Connected to mongo successfully!"));
 
-app.post("/api/v1/signup", async (req: Request, res: Response) => {
+app.post("/api/v1/signup", async (req, res) => {
   try {
     const userResult = userSchema.safeParse(req.body);
 
@@ -36,7 +36,7 @@ app.post("/api/v1/signup", async (req: Request, res: Response) => {
     if (userExists) {
       if (
         userExists.email === userResult.data.email &&
-        userExists.username === userResult.data.email
+        userExists.username === userResult.data.username
       )
         return res.status(409).json({
           message: "User already exists with this email and username",
@@ -59,7 +59,7 @@ app.post("/api/v1/signup", async (req: Request, res: Response) => {
       username: userResult.data.username,
       password: hashedPassword,
       email: userResult.data.email,
-    }).exec();
+    });
 
     return res.status(200).json({ message: "User signed up successfully!" });
   } catch (e) {
