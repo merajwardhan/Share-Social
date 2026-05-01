@@ -11,7 +11,7 @@ import { User, Content } from "./schema/dbSchema.js";
 const app = express();
 app.use(express.json());
 await mongoose
-  .connect("mongodb://127.0.0.1:27017/Share_Social")
+  .connect(`${process.env.MONGO_URL}`)
   .then(() => console.log("Connected to mongo successfully!"));
 
 app.post("/api/v1/signup", async (req: Request, res: Response) => {
