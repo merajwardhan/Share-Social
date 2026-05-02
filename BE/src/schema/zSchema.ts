@@ -9,7 +9,7 @@ export const userSchema = z.object({
     .max(30, { message: "Name cannot be more then 30 characters!" }),
   username: z
     .string()
-    .min(3, { message: "Password must contain at least 3 characters." })
+    .min(3, { message: "Username must contain at least 3 characters." })
     .max(10, { message: "Username must not be longer than 10 characters." }),
   password: z
     .string()
@@ -21,5 +21,5 @@ export const userSchema = z.object({
     .regex(/[^A-Za-z0-9]/, {
       message: "Must contain at least one special character",
     }),
-  email: z.email({ message: "Incorrect email format!" }),
+  email: z.string().email({ message: "Incorrect email format!" }),
 });
