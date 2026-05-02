@@ -23,3 +23,25 @@ export const userSchema = z.object({
     }),
   email: z.string().email({ message: "Incorrect email format!" }),
 });
+
+export const signinSchema = z
+  .object({
+    username: z
+      .string()
+      .min(3, { message: "Username must contain at least 3 characters." })
+      .max(10, { message: "Username must not be longer than 10 characters." }),
+    email: z.string().email({ message: "Incorrect email format!" }),
+    password: z
+      .string()
+      .min(8, { message: "Password must contain at least 8 characters." })
+      .max(20, { message: "Password must not be longer than 20 characters." })
+      .regex(/[A-Z]/, { message: "Must contain at least one uppercase letter" })
+      .regex(/[a-z]/, { message: "Must contain at least one lowercase letter" })
+      .regex(/[0-9]/, { message: "Must contain at least one number" })
+      .regex(/[^A-Za-z0-9]/, {
+        message: "Must contain at least one special character",
+      }),
+  })
+  .refine((data) => data.email || data.username, {
+    message: "Email or username is required for signing in!",
+  });
