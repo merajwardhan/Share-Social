@@ -3,6 +3,7 @@
 import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
 import { userSchema, signinSchema } from "./schema/zSchema.js";
 import * as argon2 from "argon2";
 import { User, Content } from "./schema/dbSchema.js";
@@ -87,12 +88,20 @@ app.post("/api/v1/signin", async (req, res) => {
         { email: userResult.data.email },
         { username: userResult.data.username },
       ],
-    });
+    }).exec();
 
     if (!userExists)
       return res
         .status(403)
         .json({ message: "No user with the given username/email exists!" });
+
+    const token = jwt.sign(
+      { username: userExists.username },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" },
+    );
+
+    return res.status(200).json({ message: "Signed in successfully!", token });
   } catch (e) {
     console.log("Something went wrong at Signin\nError : " + e);
     res.status(500).json({ message: "Something went wrong while signing in!" });
