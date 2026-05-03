@@ -3,7 +3,7 @@
 import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
-import { userSchema } from "./schema/zSchema.js";
+import { userSchema, signinSchema } from "./schema/zSchema.js";
 import * as argon2 from "argon2";
 import { User, Content } from "./schema/dbSchema.js";
 
@@ -71,6 +71,33 @@ app.post("/api/v1/signup", async (req, res) => {
 });
 
 //TODO: signin end point with argon2 verify
+app.post("/api/v1/signin", async (req, res) => {
+  try {
+    const userResult = signinSchema.safeParse(req.body);
+
+    if (!userResult.success) {
+      return res.status(403).json({
+        message: "Wrong signin credentials!",
+        Error: userResult.error.message,
+      });
+    }
+
+    const userExists = await User.findOne({
+      $or: [
+        { email: userResult.data.email },
+        { username: userResult.data.username },
+      ],
+    });
+
+    if (!userExists)
+      return res
+        .status(403)
+        .json({ message: "No user with the given username/email exists!" });
+  } catch (e) {
+    console.log("Something went wrong at Signin\nError : " + e);
+    res.status(500).json({ message: "Something went wrong while signing in!" });
+  }
+});
 
 app.listen(process.env.PORT, (e: Error | undefined): void => {
   if (e) console.error(`There is this following error\n${e}`);
