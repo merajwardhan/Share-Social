@@ -95,9 +95,16 @@ app.post("/api/v1/signin", async (req, res) => {
         .status(403)
         .json({ message: "No user with the given username/email exists!" });
 
-    // TODO: Write these 2 functionalities!
-    // const isPasswordValid:
-    // if(!isPasswordValid)
+    const isPasswordValid: boolean = await argon2.verify(
+      userExists.password,
+      userResult.data.password,
+    );
+
+    if (!isPasswordValid) {
+      return res.status(403).json({
+        message: "Password does not match for the given email/username!",
+      });
+    }
 
     const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
     if (!JWT_SECRET) {
