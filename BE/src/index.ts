@@ -85,8 +85,8 @@ app.post("/api/v1/signin", async (req, res) => {
 
     const userExists = await User.findOne({
       $or: [
-        { email: userResult.data.email },
         { username: userResult.data.username },
+        { email: userResult.data.email },
       ],
     }).exec();
 
@@ -95,11 +95,21 @@ app.post("/api/v1/signin", async (req, res) => {
         .status(403)
         .json({ message: "No user with the given username/email exists!" });
 
-    const token = jwt.sign(
-      { username: userExists.username },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" },
-    );
+    // TODO: Write these 2 functionalities!
+    // const isPasswordValid:
+    // if(!isPasswordValid)
+
+    const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      return res.status(403).json({
+        message:
+          "Error with sign in function at environment variable handling!",
+      });
+    }
+
+    const token = jwt.sign({ username: userExists.username }, JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
     return res.status(200).json({ message: "Signed in successfully!", token });
   } catch (e) {
