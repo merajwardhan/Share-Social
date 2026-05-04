@@ -28,7 +28,7 @@ export const signinSchema = z
   .object({
     username: userSchema.shape.username.optional(),
     email: userSchema.shape.email.optional(),
-    password: userSchema.shape.password.optional(),
+    password: userSchema.shape.password,
   })
   .refine((data) => data.email || data.username, {
     message: "Email or username is required to signin!",
