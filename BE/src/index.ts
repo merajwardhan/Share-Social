@@ -5,7 +5,7 @@ import express from "express";
 import mongoose from "mongoose";
 import type { QueryFilter } from "mongoose";
 import jwt from "jsonwebtoken";
-import { userSchema, signinSchema } from "./schema/zSchema.js";
+import { userSchema, signinSchema, contentSchema } from "./schema/zSchema.js";
 import * as argon2 from "argon2";
 import { User, Content } from "./schema/dbSchema.js";
 import type { IUser } from "./types/dbTypes.js";
@@ -128,7 +128,58 @@ app.post("/api/v1/signin", async (req, res) => {
 
 app.post("api/v1/content", async (req, res) => {
   try {
-    //TODO: safe parsing content logic
+    const contentResult = contentSchema.safeParse(req.body);
+
+    if (!contentResult.success) {
+      return res.status(403).json({
+        message: "Invalid Content",
+        Error: contentResult.error.message,
+      });
+    }
+
+    const token: string | undefined = req.headers.authorization;
+    if (!token)
+      return res.status(403).json({ messge: "JWT token not provided" });
+
+    const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
+    if (!JWT_SECRET)
+      return res.status(403).json({ message: "JWT Secret not provided!" });
+
+    const decodedToken = jwt.verify(token, JWT_SECRET);
+
+    let userId: IUser | null = null;
+    if (
+      decodedToken &&
+      typeof decodedToken !== "string" &&
+      decodedToken.username
+    ) {
+      userId = await User.findOne({
+        username: decodedToken.username,
+      })
+        .select("_id")
+        .exec();
+    }
+
+    if (!userId || !userId._id) {
+      return res.status(403).json({ message: "User not found!" });
+    }
+
+    if (!userId._id) {
+      return res
+        .status(403)
+        .json({ message: "User id not found to create content!" });
+    }
+
+    await Content.create({
+      title: contentResult.data.title,
+      link: contentResult.data.link,
+      description: contentResult.data.description || "",
+      user: userId._id,
+    });
+
+    return res
+      .status(200)
+      .json({ message: "Your content is successfully added!" });
   } catch (e) {
     console.error(
       "Something went wrong while adding content in /api/v1/content\nError : " +
