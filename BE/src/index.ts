@@ -3,10 +3,12 @@
 import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
+import type { QueryFilter } from "mongoose";
 import jwt from "jsonwebtoken";
 import { userSchema, signinSchema } from "./schema/zSchema.js";
 import * as argon2 from "argon2";
 import { User, Content } from "./schema/dbSchema.js";
+import type { IUser } from "./types/dbTypes.js";
 
 const app = express();
 app.use(express.json());
@@ -34,7 +36,7 @@ app.post("/api/v1/signup", async (req, res) => {
         { username: userResult.data.username },
         { email: userResult.data.email },
       ],
-    }).exec();
+    } as QueryFilter<IUser>).exec();
 
     if (userExists) {
       if (
@@ -71,7 +73,6 @@ app.post("/api/v1/signup", async (req, res) => {
   }
 });
 
-//TODO: signin end point with argon2 verify
 app.post("/api/v1/signin", async (req, res) => {
   try {
     const userResult = signinSchema.safeParse(req.body);
@@ -88,7 +89,8 @@ app.post("/api/v1/signin", async (req, res) => {
         { username: userResult.data.username },
         { email: userResult.data.email },
       ],
-    }).exec();
+    } as QueryFilter<IUser>).exec();
+    //TODO: Read deepseek , kimi and qwen explanation for QueryFilter
 
     if (!userExists)
       return res
