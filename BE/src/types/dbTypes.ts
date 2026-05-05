@@ -11,5 +11,6 @@ export interface IUser extends Document {
 export interface IContent extends Document {
   title: string;
   link: string;
+  description: string;
   user: Types.ObjectId;
 }

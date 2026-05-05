@@ -14,6 +14,7 @@ const userSchema = new Schema<IUser>({
 const contentSchema = new Schema<IContent>({
   title: { type: String, required: true },
   link: String,
+  description: String,
   user: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
