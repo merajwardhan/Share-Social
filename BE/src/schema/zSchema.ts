@@ -33,3 +33,14 @@ export const signinSchema = z
   .refine((data) => data.email || data.username, {
     message: "Email or username is required to signin!",
   });
+
+export const contentSchema = z.object({
+  title: z
+    .string()
+    .min(3, { message: "Title should be at least 3 characters long!" })
+    .max(30, { message: "Title cannot be more than 30 characters long!" }),
+  link: z.string().url({ message: "Invalid URL" }),
+  description: z
+    .string()
+    .max(300, { message: "Description cannot be longer than 300 characters" }),
+});
