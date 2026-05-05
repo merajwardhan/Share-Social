@@ -42,5 +42,6 @@ export const contentSchema = z.object({
   link: z.string().url({ message: "Invalid URL" }),
   description: z
     .string()
-    .max(300, { message: "Description cannot be longer than 300 characters" }),
+    .max(300, { message: "Description cannot be longer than 300 characters" })
+    .optional(),
 });
