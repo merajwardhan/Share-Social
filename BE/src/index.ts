@@ -90,7 +90,6 @@ app.post("/api/v1/signin", async (req, res) => {
         { email: userResult.data.email },
       ],
     } as QueryFilter<IUser>).exec();
-    //TODO: Read deepseek , kimi and qwen explanation for QueryFilter
 
     if (!userExists)
       return res
@@ -124,6 +123,20 @@ app.post("/api/v1/signin", async (req, res) => {
   } catch (e) {
     console.log("Something went wrong at Signin\nError : " + e);
     res.status(500).json({ message: "Something went wrong while signing in!" });
+  }
+});
+
+app.post("api/v1/content", async (req, res) => {
+  try {
+    //TODO: safe parsing content logic
+  } catch (e) {
+    console.error(
+      "Something went wrong while adding content in /api/v1/content\nError : " +
+        e,
+    );
+    return res
+      .status(403)
+      .json({ message: "Something went wrong while adding content!" });
   }
 });
 
