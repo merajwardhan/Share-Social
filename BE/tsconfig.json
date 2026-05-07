@@ -41,5 +41,6 @@
     "moduleDetection": "force",
     "skipLibCheck": true
   },
-  "exclude": ["node_modules", "eslint.config.*", "dist"]
+  "exclude": ["node_modules", "eslint.config.*", "dist"],
+  "include": ["src/**/*"]
 }
