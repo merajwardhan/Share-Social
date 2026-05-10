@@ -7,6 +7,7 @@ import type { QueryFilter } from "mongoose";
 import jwt from "jsonwebtoken";
 import { JWT_Auth } from "./middlewares/JWT_Auth.js";
 import { userSchema, signinSchema, contentSchema } from "./schema/zSchema.js";
+import * as z from "zod";
 import * as argon2 from "argon2";
 import { User, Content } from "./schema/dbSchema.js";
 import type { IUser } from "./types/dbTypes.js";
@@ -176,8 +177,39 @@ app.post("/api/v1/content", JWT_Auth, async (req, res) => {
   }
 });
 
-app.post("/api/v1/content/update", async (req, res) => {
+app.patch("/api/v1/content/:contentId", JWT_Auth, async (req, res) => {
   try {
+    const { contentId } = req.params;
+    if (!contentId || typeof contentId !== "string")
+      return res.status(403).json({ message: "ContentId not provided!" });
+    if (!mongoose.isObjectIdOrHexString(contentId))
+      return res.status(403).json({ message: "Invalid contentId!", contentId });
+
+    type contentType = z.infer<typeof contentSchema>;
+    const updatedContent: contentType = req.body.updatedContent;
+    if (!updatedContent)
+      return res
+        .status(403)
+        .json({ message: "Update information not provided!" });
+
+    const user = await User.findOne({
+      username: req.user,
+      content: contentId,
+    } as QueryFilter<IUser>);
+    if (!user)
+      return res
+        .status(403)
+        .json({ message: "User is not the owner of the content!" });
+
+    const updatedData = await Content.findByIdAndUpdate(
+      contentId,
+      updatedContent,
+      { new: true },
+    );
+
+    return res
+      .status(200)
+      .json({ message: "Content updated successfully!", updatedData });
   } catch (e) {
     console.error(
       "Something went wrong while updating the content!\nError : " + e,
