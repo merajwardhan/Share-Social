@@ -162,6 +162,10 @@ app.post("/api/v1/content", JWT_Auth, async (req, res) => {
       user: userId._id,
     });
 
+    await User.findByIdAndUpdate(userId._id, {
+      $push: { content: createdContent._id },
+    });
+
     return res.status(200).json({
       message: "Your content is successfully added!",
       contentId: createdContent._id,
