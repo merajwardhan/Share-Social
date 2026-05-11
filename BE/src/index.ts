@@ -10,7 +10,7 @@ import { userSchema, signinSchema, contentSchema } from "./schema/zSchema.js";
 import * as z from "zod";
 import * as argon2 from "argon2";
 import { User, Content } from "./schema/dbSchema.js";
-import type { IUser } from "./types/dbTypes.js";
+import type { IUser, IContent } from "./types/dbTypes.js";
 
 const app = express();
 app.use(express.json());
@@ -264,6 +264,34 @@ app.get("/api/v1/content", JWT_Auth, async (req, res) => {
     return res
       .status(403)
       .json({ message: "Something went wrong while retreiving the content!" });
+  }
+});
+
+app.delete("/api/v1/content/:content", JWT_Auth, async (req, res) => {
+  try {
+    const { contentId } = req.params;
+
+    const deletedContent = await Content.findOneAndDelete({
+      _id: contentId,
+      user: await User.findOne({ username: req.user }).select("_id"),
+    } as QueryFilter<IContent>);
+
+    if (!deletedContent)
+      return res
+        .status(403)
+        .json({ message: "Content not found or you do not own the post!" });
+
+    await User.findOneAndUpdate(
+      { username: req.user },
+      { $pull: { content: contentId } },
+    );
+
+    return res.status(200).json({ message: "Content Deleted successfully!" });
+  } catch (e) {
+    console.error("Content deletion went wrong\nError : " + e);
+    return res
+      .status(403)
+      .json({ message: "Something went wrong while deleting the content!" });
   }
 });
 
