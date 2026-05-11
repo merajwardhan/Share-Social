@@ -221,6 +221,52 @@ app.patch("/api/v1/content/:contentId", JWT_Auth, async (req, res) => {
   }
 });
 
+app.get("/api/v1/content", JWT_Auth, async (req, res) => {
+  try {
+    const userWithContent = await User.aggregate([
+      { $match: { username: req.user } },
+      {
+        $lookup: {
+          from: "contents",
+          localField: "content",
+          foreignField: "_id",
+          as: "content",
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          content: 1,
+          _id: 0,
+        },
+      },
+    ]);
+
+    type contentType = z.infer<typeof contentSchema>;
+    if (!userWithContent[0])
+      return res.status(403).json({ message: "No user found!" });
+    else {
+      userWithContent[0].content = userWithContent[0].content.map(
+        (content: contentType) => ({
+          title: content.title,
+          link: content.link,
+          description: content.description,
+        }),
+      );
+    }
+
+    return res.status(200).json({
+      message: "Contents successfully fetched!",
+      contents: userWithContent[0].content,
+    });
+  } catch (e) {
+    console.error("Error while fetching content!\nError : " + e);
+    return res
+      .status(403)
+      .json({ message: "Something went wrong while retreiving the content!" });
+  }
+});
+
 app.listen(process.env.PORT, (e: Error | undefined): void => {
   if (e) console.error(`There is this following error\n${e}`);
   else console.log("Server running on Port " + process.env.PORT);

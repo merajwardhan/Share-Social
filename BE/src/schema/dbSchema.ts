@@ -17,6 +17,7 @@ const contentSchema = new Schema<IContent>({
   description: String,
   user: { type: Schema.Types.ObjectId, ref: "User" },
 });
+//TODO: Add createdAt and modifiedAt so you can pull documents and sort them with the help of unwind -> sort -> gruup (using aggregate)
 
 export const User = mongoose.model<IUser>("User", userSchema);
 export const Content = mongoose.model<IContent>("Content", contentSchema);
