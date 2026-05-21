@@ -11,17 +11,12 @@ import * as z from "zod";
 import * as argon2 from "argon2";
 import { User, Content } from "./schema/dbSchema.js";
 import type { IUser, IContent } from "./types/dbTypes.js";
+import { dbConnect } from "./helper/dbConnect.js";
 
 const app = express();
 app.use(express.json());
 
-try {
-  await mongoose
-    .connect(`${process.env.MONGO_URL}`)
-    .then(() => console.log("Connected to mongo successfully!"));
-} catch (e) {
-  console.error("MongoDB connection failed: " + e);
-}
+dbConnect();
 
 app.post("/api/v1/signup", async (req, res) => {
   try {
