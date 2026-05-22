@@ -9,6 +9,7 @@ const userSchema = new Schema<IUser>({
   password: { type: String, required: true },
   email: { type: String, unique: true, required: true },
   content: [{ type: Schema.Types.ObjectId, ref: "Content" }],
+  shareable: { type: Boolean, default: true },
 });
 
 const contentSchema = new Schema<IContent>({
