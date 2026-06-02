@@ -155,6 +155,7 @@ app.post("/api/v1/content", JWT_Auth, async (req, res) => {
       link: contentResult.data.link,
       description: contentResult.data.description || "",
       user: userId._id,
+      tags: contentResult.data.tags || [],
     });
 
     await User.findByIdAndUpdate(userId._id, {
@@ -203,7 +204,7 @@ app.patch("/api/v1/content/:contentId", JWT_Auth, async (req, res) => {
     const updatedData = await Content.findByIdAndUpdate(
       contentId,
       updatedContent,
-      { new: true },
+      { returnDocument: "after" },
     );
 
     return res
