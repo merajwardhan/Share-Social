@@ -22,6 +22,7 @@ export const userSchema = z.object({
       message: "Must contain at least one special character",
     }),
   email: z.string().email({ message: "Incorrect email format!" }),
+  shareable: z.boolean().default(true).optional(),
 });
 
 export const signinSchema = z
@@ -43,5 +44,15 @@ export const contentSchema = z.object({
   description: z
     .string()
     .max(300, { message: "Description cannot be longer than 300 characters" })
+    .optional(),
+  tags: z
+    .array(
+      z
+        .string()
+        .min(3, "Tag should be at least 3 letter long!")
+        .max(45, "Tag should not be longer than 45 letters!")
+        .transform((str) => str.trim().toLowerCase())
+        .refine((str) => !str.includes(" "), "Tag should be just one letter!"),
+    )
     .optional(),
 });
