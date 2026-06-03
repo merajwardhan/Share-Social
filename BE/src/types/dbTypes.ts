@@ -6,6 +6,7 @@ export interface IUser extends Document {
   password: string;
   email: string;
   content: Types.ObjectId[];
+  shareable: boolean;
 }
 
 export interface IContent extends Document {
@@ -13,4 +14,5 @@ export interface IContent extends Document {
   link: string;
   description: string;
   user: Types.ObjectId;
+  tags: string[];
 }
