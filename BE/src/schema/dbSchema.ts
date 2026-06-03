@@ -17,6 +17,7 @@ const contentSchema = new Schema<IContent>({
   link: String,
   description: String,
   user: { type: Schema.Types.ObjectId, ref: "User" },
+  tags: [{ type: String }],
 });
 //TODO: Add createdAt and modifiedAt so you can pull documents and sort them with the help of unwind -> sort -> gruup (using aggregate)
 
