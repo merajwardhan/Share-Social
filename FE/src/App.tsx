@@ -14,6 +14,7 @@ import {
   MobileNavToggle,
   MobileNavMenu,
 } from "./components/ui/resizable-navbar";
+import { ValueProposition } from "./components/ui/ValuePreposition";
 
 function App() {
   const { resolvedTheme } = useTheme();
@@ -203,6 +204,8 @@ function App() {
               </div>
             </div>
           </div>
+          {/* :TODO Add a video of how the website works below the CTA and grid*/}
+          <ValueProposition></ValueProposition>
         </BackgroundLines>
       </Patterns>
     </>
