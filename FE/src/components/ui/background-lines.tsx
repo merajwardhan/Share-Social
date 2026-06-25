@@ -15,7 +15,13 @@ export const BackgroundLines = ({
   };
 }) => {
   return (
-    <div className={cn("h-[20rem] md:h-screen w-full", className)}>
+    // <div className={cn("h-[20rem] md:h-screen w-full", className)}>
+    <div
+      className={cn(
+        "h-[20rem] relative md:h-screen w-full flex flex-col overflow-hidden",
+        className,
+      )}
+    >
       <div className="hidden md:block absolute inset-0 pointer-events-none z-0">
         <SVG svgOptions={svgOptions} />
       </div>
