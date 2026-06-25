@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 
 export function ValueProposition() {
   return (
-    <section className="py-24 md:py-32 relative z-10 w-full bg-background border-t border-border/50">
+    <section className="py-24 md:py-32 relative z-10 w-full bg-transparent border-t border-border/50">
       <div className="container mx-auto px-6 max-w-4xl text-center flex flex-col items-center">
         {/* The Badge */}
         <motion.div
