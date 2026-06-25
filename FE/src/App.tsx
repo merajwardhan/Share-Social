@@ -91,8 +91,8 @@ function App() {
           {/* Inside BackgroundLines, below your Navbar */}
           <HeroSection></HeroSection>
           {/* :TODO Add a video of how the website works below the CTA and grid*/}
-          <ValueProposition></ValueProposition>
         </BackgroundLines>
+        <ValueProposition></ValueProposition>
       </Patterns>
     </>
   );
