@@ -37,56 +37,55 @@ function App() {
   return (
     <>
       <Patterns varient={resolvedTheme === "dark" ? "dark" : "light"}>
-        <BackgroundLines>
-          <Navbar>
-            {/* Desktop Layout */}
-            <NavBody>
-              <NavbarLogo />
-              <NavItems items={navLinks} />
+        <Navbar>
+          {/* Desktop Layout */}
+          <NavBody>
+            <NavbarLogo />
+            <NavItems items={navLinks} />
 
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <NavbarButton variant="dark">Sign Up</NavbarButton>
+            </div>
+          </NavBody>
+
+          {/* Mobile Layout */}
+          <MobileNav>
+            <MobileNavHeader>
               <div className="flex items-center gap-2">
+                <NavbarLogo />
+              </div>
+
+              <div className="flex items-center gap-4">
                 <ThemeToggle />
-                <NavbarButton variant="dark">Sign Up</NavbarButton>
+                <MobileNavToggle
+                  isOpen={isMobileMenuOpen}
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                />
               </div>
-            </NavBody>
-
-            {/* Mobile Layout */}
-            <MobileNav>
-              <MobileNavHeader>
-                <div className="flex items-center gap-2">
-                  <NavbarLogo />
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <ThemeToggle />
-                  <MobileNavToggle
-                    isOpen={isMobileMenuOpen}
-                    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  />
-                </div>
-              </MobileNavHeader>
-            </MobileNav>
-            <MobileNavMenu
-              isOpen={isMobileMenuOpen}
-              onClose={() => setIsMobileMenuOpen(false)}
-            >
-              <div className="flex flex-col gap-4 w-full">
-                {navLinks.map((item, idx) => (
-                  <a
-                    key={idx}
-                    href={item.link}
-                    className="text-lg font-medium text-foreground"
-                  >
-                    {item.name}
-                  </a>
-                ))}
-                <NavbarButton variant="dark" className="w-full mt-4">
-                  Sign Up
-                </NavbarButton>
-              </div>
-            </MobileNavMenu>
-          </Navbar>
-
+            </MobileNavHeader>
+          </MobileNav>
+          <MobileNavMenu
+            isOpen={isMobileMenuOpen}
+            onClose={() => setIsMobileMenuOpen(false)}
+          >
+            <div className="flex flex-col gap-4 w-full">
+              {navLinks.map((item, idx) => (
+                <a
+                  key={idx}
+                  href={item.link}
+                  className="text-lg font-medium text-foreground"
+                >
+                  {item.name}
+                </a>
+              ))}
+              <NavbarButton variant="dark" className="w-full mt-4">
+                Sign Up
+              </NavbarButton>
+            </div>
+          </MobileNavMenu>
+        </Navbar>
+        <BackgroundLines>
           {/* REST OF THE PAGE CONTENT HERE  */}
           {/* Inside BackgroundLines, below your Navbar */}
           <HeroSection></HeroSection>
