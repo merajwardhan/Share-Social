@@ -12,7 +12,7 @@ export function ValueProposition() {
           transition={{ duration: 0.5 }}
           className="inline-flex items-center rounded-full border border-border bg-secondary px-3 py-1 text-sm font-medium text-secondary-foreground mb-8"
         >
-          ✨ The LinkList Manifesto
+          ✨ The linkSocial Manifesto
         </motion.div>
 
         {/* The Catchy Headline */}
@@ -44,9 +44,9 @@ export function ValueProposition() {
           className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto flex flex-col gap-6 leading-relaxed"
         >
           <p>
-            LinkList is the quiet corner of the internet where you can stash
-            your favorite articles, design inspirations, code snippets, and
-            late-night Wikipedia rabbit holes.
+            linkSocial is the quiet corner of the internet where you can stash
+            your favorite articles links, design inspirations links, and
+            late-night Wikipedia rabbit holes. Basically all your LINKS
           </p>
           <p>
             We aren't trying to reinvent the wheel. We are just building the
