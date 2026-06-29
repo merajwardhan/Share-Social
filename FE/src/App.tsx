@@ -16,6 +16,7 @@ import {
 } from "./components/ui/resizable-navbar";
 import { ValueProposition } from "./components/ui/ValuePreposition";
 import HeroSection from "./components/ui/HeroSection";
+import { Footer } from "./components/ui/footer";
 
 function App() {
   const { resolvedTheme } = useTheme();
@@ -92,6 +93,7 @@ function App() {
           {/* :TODO Add a video of how the website works below the CTA and grid*/}
         </BackgroundLines>
         <ValueProposition></ValueProposition>
+        <Footer></Footer>
       </Patterns>
     </>
   );
