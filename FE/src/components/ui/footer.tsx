@@ -1,7 +1,7 @@
 import {
   IconBrandTwitter,
   IconBrandGithub,
-  IconBrandDiscord,
+  IconBrandLinkedin,
 } from "@tabler/icons-react";
 
 export function Footer() {
@@ -35,8 +35,8 @@ export function Footer() {
               </span>
             </div>
             <p className="text-muted-foreground text-sm max-w-sm leading-relaxed">
-              Organize your web universe. Save, curate, and share your favorite
-              corners of the internet with beautiful, Pinterest-style boards.
+              Organize your link universe. Save, curate, and share your favorite
+              links of the internet with beautiful, Pinterest-style boards.
             </p>
           </div>
 
@@ -97,17 +97,29 @@ export function Footer() {
 
           {/* Social Icons */}
           <div className="flex items-center gap-4 text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">
+            <a
+              href="https://x.com/merajwardhan"
+              target="_blank"
+              className="hover:text-foreground transition-colors"
+            >
               <IconBrandTwitter size={20} stroke={1.5} />
               <span className="sr-only">Twitter</span>
             </a>
-            <a href="#" className="hover:text-foreground transition-colors">
+            <a
+              href="https://github.com/merajwardhan"
+              target="_blank"
+              className="hover:text-foreground transition-colors"
+            >
               <IconBrandGithub size={20} stroke={1.5} />
               <span className="sr-only">GitHub</span>
             </a>
-            <a href="#" className="hover:text-foreground transition-colors">
-              <IconBrandDiscord size={20} stroke={1.5} />
-              <span className="sr-only">Discord</span>
+            <a
+              href="https://www.linkedin.com/in/imrajwardhan/"
+              target="_blank"
+              className="hover:text-foreground transition-colors"
+            >
+              <IconBrandLinkedin size={20} stroke={1.5} />
+              <span className="sr-only">LinkedIn</span>
             </a>
           </div>
         </div>
