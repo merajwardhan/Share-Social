@@ -17,6 +17,7 @@ import {
 import { ValueProposition } from "../components/ui/ValuePreposition";
 import HeroSection from "../components/ui/HeroSection";
 import { Footer } from "../components/ui/footer";
+import { Link } from "react-router-dom";
 
 export function Home() {
   const { resolvedTheme } = useTheme();
@@ -46,7 +47,9 @@ export function Home() {
 
             <div className="flex items-center gap-2">
               <ThemeToggle />
-              <NavbarButton variant="dark">Sign Up</NavbarButton>
+              <Link to="/signup">
+                <NavbarButton variant="dark">Sign Up</NavbarButton>
+              </Link>
             </div>
           </NavBody>
 
@@ -80,9 +83,11 @@ export function Home() {
                   {item.name}
                 </a>
               ))}
-              <NavbarButton variant="dark" className="w-full mt-4">
-                Sign Up
-              </NavbarButton>
+              <Link to="/signup">
+                <NavbarButton variant="dark" className="w-full mt-4">
+                  Sign Up
+                </NavbarButton>
+              </Link>
             </div>
           </MobileNavMenu>
         </Navbar>
