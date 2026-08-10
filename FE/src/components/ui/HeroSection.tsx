@@ -4,7 +4,7 @@ import { NavbarButton } from "./resizable-navbar";
 export default function HeroSection(): ReactElement {
   return (
     <>
-      <div className="container mx-auto px-6 h-full flex flex-col lg:flex-row items-center justify-center pt-36 lg:pt-0 gap-12 relative z-10">
+      <div className="container mx-auto px-6 h-full flex flex-col lg:flex-row items-center justify-start pt-36 lg:pt-0 gap-12 relative z-10">
         {/* LEFT SIDE: Copy & CTA */}
         <div className="flex-1 text-center lg:text-left flex flex-col gap-6">
           <h1 className="text-5xl sm:text-7xl font-black text-foreground leading-tight">
