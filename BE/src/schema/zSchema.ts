@@ -10,7 +10,14 @@ export const userSchema = z.object({
   username: z
     .string()
     .min(3, { message: "Username must contain at least 3 characters." })
-    .max(10, { message: "Username must not be longer than 10 characters." }),
+    .max(10, { message: "Username must not be longer than 10 characters." })
+    .regex(/^[a-zA-Z0-9_.]+$/, {
+      message:
+        "Username can only contain letters, numbers, underscores, and dots",
+    })
+    .refine((val) => /[a-zA-Z0-9]/.test(val), {
+      message: "Username must contain at least one letter or number",
+    }),
   password: z
     .string()
     .min(8, { message: "Password must contain at least 8 characters." })
