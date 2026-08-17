@@ -6,27 +6,75 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "./ui/field";
 import { Input } from "./ui/input";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { userSchema, type UserSignUpFormData } from "@/lib/zodSchema";
+import { useEffect } from "react";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
-  const [nameInput, setNameInput] = useState("");
-  const [usernameInput, setUsernameInput] = useState("");
-  const [emailInput, setEmailInput] = useState("");
-  const [passwordInput, setPasswordInput] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting, touchedFields },
+    watch,
+    trigger,
+  } = useForm<UserSignUpFormData>({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      name: "",
+      username: "",
+      password: "",
+      confirmPassword: "",
+      email: "",
+    },
+  });
 
-  const handleSignup = (e: React.FormEvent) => {
-    try {
-      e.preventDefault();
-      if (passwordInput !== confirmPassword) {
-        alert("Password does not match with confirmed Password!");
-        return;
-      }
-    } catch (e) {
-      return;
+  const passwordLive = watch("password");
+  const confirmPasswordLive = watch("confirmPassword");
+
+  const showMatchSuccess =
+    touchedFields.confirmPassword &&
+    confirmPasswordLive &&
+    passwordLive === confirmPasswordLive;
+
+  useEffect(() => {
+    if (touchedFields.confirmPassword) {
+      trigger("confirmPassword");
+      trigger("password");
     }
+  }, [passwordLive, trigger, touchedFields.confirmPassword]);
+
+  const passwordRequirementHints = (pwd: string) => {
+    if (!pwd) return [];
+    const requirements = [];
+    if (pwd.length < 8)
+      requirements.push("Password must contain 8 characters!");
+    if (pwd.length > 20)
+      requirements.push("Password should not be more than 20 characters!");
+    if (!/[A-Z]/.test(pwd))
+      requirements.push("Password must have atleast 1 uppercase letter!");
+    if (!/[a-z]/.test(pwd))
+      requirements.push("Password must have atleast 1 lowercase letter!");
+    if (!/[0-9]/.test(pwd))
+      requirements.push("Password must have atleast 1 number!");
+    if (!/[^A-Za-z0-9]/.test(pwd))
+      requirements.push("Password must have atleast 1 special character!");
+    return requirements;
+  };
+
+  const requirements = passwordRequirementHints(passwordLive);
+
+  const onSubmit = (data: UserSignUpFormData) => {
+    console.log(data);
+    //TODO: Make backend call function. or add function in utils and use here
   };
 
   return (
@@ -38,33 +86,31 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <FieldGroup>
             <Field>
               <FieldLabel htmlFor="name">Full Name</FieldLabel>
               <Input
                 id="name"
                 type="text"
-                placeholder="John Doe"
+                placeholder="Rajwardhan Patil"
                 required
-                value={nameInput}
-                onChange={(e) => {
-                  setNameInput(e.target.value);
-                }}
+                {...register("name")}
               />
+              {errors.name && <FieldError>{errors.name.message}</FieldError>}
             </Field>
             <Field>
               <FieldLabel htmlFor="username">Username</FieldLabel>
               <Input
                 id="username"
                 type="text"
-                placeholder="john_doe"
+                placeholder="rajwardhan_patil"
                 required
-                value={usernameInput}
-                onChange={(e) => {
-                  setUsernameInput(e.target.value);
-                }}
+                {...register("username")}
               />
+              {errors.username && (
+                <FieldError>{errors.username.message}</FieldError>
+              )}
               <FieldDescription>
                 Username should be minimum 3 characters and maximum 10
                 characters. It can include dots and underscores.
@@ -75,13 +121,11 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               <Input
                 id="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="raj@example.com"
                 required
-                value={emailInput}
-                onChange={(e) => {
-                  setEmailInput(e.target.value);
-                }}
+                {...register("email")}
               />
+              {errors.email && <FieldError>{errors.email.message}</FieldError>}
               <FieldDescription>
                 We&apos;ll use this to contact you. We will not share your email
                 with anyone else.
@@ -93,14 +137,28 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 id="password"
                 type="password"
                 required
-                value={passwordInput}
-                onChange={(e) => {
-                  setPasswordInput(e.target.value);
-                }}
+                {...register("password")}
               />
-              <FieldDescription>
-                Must be at least 8 characters long.
-              </FieldDescription>
+              {errors.password && (
+                <FieldError>{errors.password.message}</FieldError>
+              )}
+              {passwordLive && requirements.length > 0 && (
+                <div className="mt-1 text-sm text-gray-600">
+                  <p className="font-medium">Password requirements:</p>
+                  <ul className="list-disc pl-4">
+                    {requirements.map((req, idx) => (
+                      <li key={idx} className="text-yellow-600">
+                        {req}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {passwordLive && requirements.length === 0 && (
+                <FieldDescription className="text-green-600">
+                  Password meets all requirements
+                </FieldDescription>
+              )}
             </Field>
             <Field>
               <FieldLabel htmlFor="confirm-password">
@@ -108,18 +166,28 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               </FieldLabel>
               <Input
                 id="confirm-password"
-                type="password"
+                type="confirm-password"
                 required
-                value={confirmPassword}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                }}
+                {...register("password")}
               />
-              <FieldDescription>Please confirm your password.</FieldDescription>
+              {errors.confirmPassword && (
+                <FieldError>{errors.confirmPassword.message}</FieldError>
+              )}
+              {showMatchSuccess ? (
+                <FieldDescription>
+                  Please confirm your password.
+                </FieldDescription>
+              ) : (
+                <FieldDescription className="text-green-600">
+                  Passwords match.
+                </FieldDescription>
+              )}
             </Field>
             <FieldGroup>
               <Field>
-                <Button type="submit">Create Account</Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Creating Account" : "Create Account"}
+                </Button>
                 <Button variant="outline" type="button">
                   Sign up with Google
                 </Button>
