@@ -1,34 +1,40 @@
 import * as z from "zod";
 
-export const userSchema = z.object({
-  name: z
-    .string()
-    .min(3, { message: "Name must be at least 3 characters long!" })
-    .max(30, { message: "Name cannot be more then 30 characters!" }),
-  username: z
-    .string()
-    .min(3, { message: "Username must contain at least 3 characters." })
-    .max(10, { message: "Username must not be longer than 10 characters." })
-    .regex(/^[a-zA-Z0-9_.]+$/, {
-      message:
-        "Username can only contain letters, numbers, underscores, and dots",
-    })
-    .refine((val) => /[a-zA-Z0-9]/.test(val), {
-      message: "Username must contain at least one letter or number",
-    }),
-  password: z
-    .string()
-    .min(8, { message: "Password must contain at least 8 characters." })
-    .max(20, { message: "Password must not be longer than 20 characters." })
-    .regex(/[A-Z]/, { message: "Must contain at least one uppercase letter" })
-    .regex(/[a-z]/, { message: "Must contain at least one lowercase letter" })
-    .regex(/[0-9]/, { message: "Must contain at least one number" })
-    .regex(/[^A-Za-z0-9]/, {
-      message: "Must contain at least one special character",
-    }),
-  email: z.string().email({ message: "Incorrect email format!" }),
-  shareable: z.boolean().default(true).optional(),
-});
+export const userSchema = z
+  .object({
+    name: z
+      .string()
+      .min(3, { message: "name must be at least 3 characters long!" })
+      .max(30, { message: "name cannot be more then 30 characters!" }),
+    username: z
+      .string()
+      .min(3, { message: "username must contain at least 3 characters." })
+      .max(10, { message: "username must not be longer than 10 characters." })
+      .regex(/^[a-za-z0-9_.]+$/, {
+        message:
+          "username can only contain letters, numbers, underscores, and dots",
+      })
+      .refine((val) => /[a-za-z0-9]/.test(val), {
+        message: "username must contain at least one letter or number",
+      }),
+    password: z
+      .string()
+      .min(8, { message: "password must contain at least 8 characters." })
+      .max(20, { message: "password must not be longer than 20 characters." })
+      .regex(/[a-z]/, { message: "must contain at least one uppercase letter" })
+      .regex(/[a-z]/, { message: "must contain at least one lowercase letter" })
+      .regex(/[0-9]/, { message: "must contain at least one number" })
+      .regex(/[^a-za-z0-9]/, {
+        message: "must contain at least one special character",
+      }),
+    confirmPassword: z.string(),
+    email: z.string().email({ message: "incorrect email format!" }),
+    shareable: z.boolean().default(true).optional(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match!",
+    path: ["confirmPassword"],
+  });
 
 export const signinSchema = z
   .object({
