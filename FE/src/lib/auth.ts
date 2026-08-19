@@ -1,6 +1,8 @@
 import { type UserSigninFormData } from "./zodSchema";
 
 export const SignupUser = async (data: UserSigninFormData) => {
+  //TODO: Write return types for the function , response , resposneData
+
   try {
     const response = await fetch("http://localhost:3000/api/v1/signup", {
       method: "POST",
