@@ -17,7 +17,6 @@ import { Input } from "./ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userSchema, type UserSignUpFormData } from "@/lib/zodSchema";
-import { useEffect } from "react";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const {
@@ -44,13 +43,6 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     touchedFields.confirmPassword &&
     confirmPasswordLive &&
     passwordLive === confirmPasswordLive;
-
-  useEffect(() => {
-    if (touchedFields.confirmPassword) {
-      trigger("confirmPassword");
-      trigger("password");
-    }
-  }, [passwordLive, trigger, touchedFields.confirmPassword]);
 
   const passwordRequirementHints = (pwd: string) => {
     if (!pwd) return [];
@@ -138,6 +130,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 type="password"
                 required
                 {...register("password")}
+                onBlur={() => trigger("confirmPassword")} //Re-validate confirm password when password changes
               />
               {errors.password && (
                 <FieldError>{errors.password.message}</FieldError>
@@ -166,20 +159,20 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               </FieldLabel>
               <Input
                 id="confirm-password"
-                type="confirm-password"
+                type="password"
                 required
-                {...register("password")}
+                {...register("confirmPassword")}
               />
               {errors.confirmPassword && (
                 <FieldError>{errors.confirmPassword.message}</FieldError>
               )}
               {showMatchSuccess ? (
-                <FieldDescription>
-                  Please confirm your password.
-                </FieldDescription>
-              ) : (
                 <FieldDescription className="text-green-600">
                   Passwords match.
+                </FieldDescription>
+              ) : (
+                <FieldDescription>
+                  Please confirm your password.
                 </FieldDescription>
               )}
             </Field>
