@@ -65,7 +65,21 @@ app.post("/api/v1/signup", async (req, res) => {
       email: userResult.data.email,
     });
 
-    return res.status(200).json({ message: "User signed up successfully!" });
+    const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      return res.status(403).json({
+        message:
+          "Error with sign in function at environment variable handling!",
+      });
+    }
+
+    const token = jwt.sign({ username: userExists.username }, JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    //TODO: Provide user data so user can return to dashboard on frontend after signup
+    return res
+      .status(200)
+      .json({ message: "User signed up successfully!", token });
   } catch (e) {
     console.error("Signup endpoint error = " + e);
     return res.status(500).json({ message: "Something went wrong" });
@@ -117,7 +131,7 @@ app.post("/api/v1/signin", async (req, res) => {
     const token = jwt.sign({ username: userExists.username }, JWT_SECRET, {
       expiresIn: "7d",
     });
-
+    //TODO: Provide user data again so user can navigate to dashboard.
     return res.status(200).json({ message: "Signed in successfully!", token });
   } catch (e) {
     console.log("Something went wrong at Signin\nError : " + e);
