@@ -64,9 +64,9 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 
   const requirements = passwordRequirementHints(passwordLive);
 
-  const onSubmit = (data: UserSignUpFormData) => {
-    console.log(data);
-    //TODO: Make backend call function. or add function in utils and use here
+  const onSubmit = async (data: UserSignUpFormData) => {
+    //TODO:Import the SignupUser function and route the user to dashboard after creating the account
+    //TODO:Check if it's a industry standard to show a toast after signing up or just redirecting
   };
 
   return (

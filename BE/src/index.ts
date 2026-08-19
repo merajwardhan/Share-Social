@@ -17,6 +17,8 @@ const app = express();
 app.use(express.json());
 
 dbConnect();
+//TODO:deal with cors erros and revise about it while you are at it
+//TODO:make specific routes for all the endpoint rather than cluttering altogether
 
 app.post("/api/v1/signup", async (req, res) => {
   try {
