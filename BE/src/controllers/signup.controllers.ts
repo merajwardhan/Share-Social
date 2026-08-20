@@ -6,7 +6,7 @@ import type { IUser } from "../types/dbTypes.js";
 import * as argon2 from "argon2";
 import jwt from "jsonwebtoken";
 
-export const signupController = async (req: Request, res: Response) => {
+export const signupHandler = async (req: Request, res: Response) => {
   try {
     const userResult = userSchema.safeParse(req.body);
 
