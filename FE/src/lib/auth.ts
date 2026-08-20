@@ -1,6 +1,9 @@
 import { type UserSigninFormData } from "./zodSchema";
+import { type SignupReturn } from "./types/auth";
 
-export const SignupUser = async (data: UserSigninFormData) => {
+export const SignupUser = async (
+  data: UserSigninFormData,
+): Promise<SignupReturn> => {
   //TODO: Write return types for the function , response , resposneData
 
   try {
