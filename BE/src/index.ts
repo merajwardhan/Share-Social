@@ -14,6 +14,7 @@ import type { IUser, IContent } from "./types/dbTypes.js";
 import { dbConnect } from "./helper/dbConnect.js";
 //TODO: Remove the unnecessary imports
 import authRouter from "./routes/auth.routes.js";
+import contentRouter from "./routes/content.routes.js";
 
 const app = express();
 app.use(express.json());
@@ -22,63 +23,11 @@ dbConnect();
 //TODO:deal with cors erros and revise about it while you are at it
 //TODO:make specific routes for all the endpoint rather than cluttering altogether
 
-app.post("/api/v1/", authRouter);
+app.use("/api/v1/", authRouter);
 
-app.post("/api/v1/", authRouter);
+app.use("/api/v1/", authRouter);
 
-app.post("/api/v1/content", JWT_Auth, async (req, res) => {
-  try {
-    const contentResult = contentSchema.safeParse(req.body);
-
-    if (!contentResult.success) {
-      return res.status(403).json({
-        message: "Invalid Content",
-        Error: contentResult.error.message,
-      });
-    }
-
-    const userId = await User.findOne({
-      username: req.user,
-    })
-      .select("_id")
-      .exec();
-
-    if (!userId || !userId._id) {
-      return res.status(403).json({ message: "User not found!" });
-    }
-
-    if (!userId._id) {
-      return res
-        .status(403)
-        .json({ message: "User id not found to create content!" });
-    }
-
-    const createdContent = await Content.create({
-      title: contentResult.data.title,
-      link: contentResult.data.link,
-      description: contentResult.data.description || "",
-      user: userId._id,
-      tags: contentResult.data.tags || [],
-    });
-
-    await User.findByIdAndUpdate(userId._id, {
-      $push: { content: createdContent._id },
-    });
-
-    return res.status(200).json({
-      message: "Your content is successfully added!",
-      contentId: createdContent._id,
-    });
-  } catch (e) {
-    console.error(
-      "Something went wrong while adding content in /api/v1/content\nError : " +
-        e,
-    );
-    return res
-      .status(403)
-      .json({ message: "Something went wrong while adding content!" });
-  }
-});
+app.use("/api/v1/", contentRouter);
 
 app.patch("/api/v1/content/:contentId", JWT_Auth, async (req, res) => {
   try {
