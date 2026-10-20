@@ -8,12 +8,23 @@ import jwt from "jsonwebtoken";
 
 export const signupHandler = async (req: Request, res: Response) => {
   try {
+    const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Error with sign in function at environment variable handling!",
+      });
+    }
+
     const userResult = userSchema.safeParse(req.body);
 
     if (!userResult.success) {
-      return res
-        .status(411)
-        .json({ message: "Error in user inputs", error: userResult.error });
+      return res.status(422).json({
+        success: false,
+        message: "Error in user inputs",
+        fieldErrors: userResult.error.flatten().fieldErrors,
+      });
     }
 
     const userExists = await User.findOne({
@@ -29,17 +40,20 @@ export const signupHandler = async (req: Request, res: Response) => {
         userExists.username === userResult.data.username
       )
         return res.status(400).json({
+          success: false,
           message: "User already exists with this email and username",
         });
 
       if (userExists.email === userResult.data.email)
-        return res
-          .status(400)
-          .json({ message: "User with this email already exists!" });
+        return res.status(400).json({
+          success: false,
+          message: "User with this email already exists!",
+        });
 
-      return res
-        .status(400)
-        .json({ message: "User with this username already exists!" });
+      return res.status(400).json({
+        success: false,
+        message: "User with this username already exists!",
+      });
     }
 
     const hashedPassword: string = await argon2.hash(userResult.data?.password);
@@ -51,19 +65,12 @@ export const signupHandler = async (req: Request, res: Response) => {
       email: userResult.data.email,
     });
 
-    const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
-    if (!JWT_SECRET) {
-      return res.status(400).json({
-        message:
-          "Error with sign in function at environment variable handling!",
-      });
-    }
-
     const token = jwt.sign({ username: userResult.data.username }, JWT_SECRET, {
       expiresIn: "7d",
     });
 
     return res.status(200).json({
+      success: true,
       message: "User signed up successfully!",
       token,
       userData: {
@@ -74,6 +81,11 @@ export const signupHandler = async (req: Request, res: Response) => {
     });
   } catch (e) {
     console.error("Signup endpoint error = " + e);
-    return res.status(500).json({ message: "Something went wrong" });
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "Something went wrong on our end, Please try again later.",
+      });
   }
 };
