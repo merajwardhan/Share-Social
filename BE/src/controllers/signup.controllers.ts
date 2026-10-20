@@ -28,23 +28,23 @@ export const signupHandler = async (req: Request, res: Response) => {
         userExists.email === userResult.data.email &&
         userExists.username === userResult.data.username
       )
-        return res.status(409).json({
+        return res.status(400).json({
           message: "User already exists with this email and username",
         });
 
       if (userExists.email === userResult.data.email)
         return res
-          .status(409)
+          .status(400)
           .json({ message: "User with this email already exists!" });
 
       return res
-        .status(409)
+        .status(400)
         .json({ message: "User with this username already exists!" });
     }
 
     const hashedPassword: string = await argon2.hash(userResult.data?.password);
 
-    await User.create({
+    const newUser = await User.create({
       name: userResult.data.name,
       username: userResult.data.username,
       password: hashedPassword,
@@ -53,7 +53,7 @@ export const signupHandler = async (req: Request, res: Response) => {
 
     const JWT_SECRET: string | undefined = process.env.JWT_SECRET;
     if (!JWT_SECRET) {
-      return res.status(403).json({
+      return res.status(400).json({
         message:
           "Error with sign in function at environment variable handling!",
       });
@@ -62,10 +62,16 @@ export const signupHandler = async (req: Request, res: Response) => {
     const token = jwt.sign({ username: userResult.data.username }, JWT_SECRET, {
       expiresIn: "7d",
     });
-    //TODO: Provide user data so user can return to dashboard on frontend after signup
-    return res
-      .status(200)
-      .json({ message: "User signed up successfully!", token });
+
+    return res.status(200).json({
+      message: "User signed up successfully!",
+      token,
+      userData: {
+        name: newUser.name,
+        username: newUser.username,
+        email: newUser.email,
+      },
+    });
   } catch (e) {
     console.error("Signup endpoint error = " + e);
     return res.status(500).json({ message: "Something went wrong" });
