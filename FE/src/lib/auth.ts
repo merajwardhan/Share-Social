@@ -1,8 +1,8 @@
-import { type UserSigninFormData } from "./zodSchema";
+import { type UserSignUpFormData } from "./zodSchema";
 import { type SignupReturn } from "./types/auth";
 
 export const SignupUser = async (
-  data: UserSigninFormData,
+  data: UserSignUpFormData,
 ): Promise<SignupReturn> => {
   //TODO: Write return types for the function , response , resposneData
 
@@ -15,27 +15,28 @@ export const SignupUser = async (
       body: JSON.stringify(data),
     });
 
-    const responseData = await response.json();
+    const responseData = (await response.json()) as SignupReturn;
 
-    if (!response.ok) {
+    if (!response.ok || !responseData.success) {
       return {
         success: false,
-        error:
-          responseData.message ||
-          "Failed to create your account (Manual Error)",
+        message: responseData.message || "Failed to create your account",
       };
     }
 
     return {
       success: true,
-      userData: responseData,
+      message: responseData.message,
+      token: responseData.token,
+      userData: responseData.userData,
     };
   } catch (error) {
     return {
       success: false,
-      error:
-        `Something went wrong!, \nError: ${error}` ||
-        "Something went wrong! (Manual Error)",
+      message:
+        error instanceof Error
+          ? error.message
+          : "Something went wrong!, Please check your connection and try again.",
     };
   }
 };
