@@ -1,15 +1,22 @@
 //Types for auth.ts
-import { type UserSignUpFormData } from "../zodSchema";
+
+type userSignupData = {
+  name: string;
+  username: string;
+  email: string;
+};
 
 interface SignupSuccess {
   success: true;
-  userData: UserSignUpFormData;
+  message: string;
+  token: string;
+  userData: userSignupData;
 }
 
 interface SignupFailure {
   success: false;
-  error: string[];
-  //TODO: Check error type , string[] or Record<string || string[]> something like that
+  message: string;
+  FieldErrors?: Record<string, string[] | undefined>;
 }
 
 export type SignupReturn = SignupSuccess | SignupFailure;
