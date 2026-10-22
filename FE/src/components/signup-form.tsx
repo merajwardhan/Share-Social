@@ -17,6 +17,7 @@ import { Input } from "./ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userSchema, type UserSignUpFormData } from "@/lib/zodSchema";
+import { SignupUser } from "@/lib/auth";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const {
@@ -27,6 +28,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
     trigger,
   } = useForm<UserSignUpFormData>({
     resolver: zodResolver(userSchema),
+    mode: "onChange",
     defaultValues: {
       name: "",
       username: "",
@@ -65,6 +67,18 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const requirements = passwordRequirementHints(passwordLive);
 
   const onSubmit = async (data: UserSignUpFormData) => {
+    try {
+      console.log("I am here, in onSubmit function! before the DB call.");
+      const result = await SignupUser(data);
+      console.log("I am here, in onSubmit function! after the DB call.");
+      if (result.success) alert("User signed up successfully!");
+      else alert("Something went wrong sign up failed!");
+    } catch (error) {
+      alert(
+        `Something went wrong onSubmit function, signup form!\nThe error is => ${error}`,
+      );
+      //TODO: Remove this alert and give a toast this is just for testing.
+    }
     //TODO:Import the SignupUser function and route the user to dashboard after creating the account
     //TODO:Check if it's a industry standard to show a toast after signing up or just redirecting
   };
@@ -163,10 +177,9 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                 required
                 {...register("confirmPassword")}
               />
-              {errors.confirmPassword && (
+              {errors.confirmPassword ? (
                 <FieldError>{errors.confirmPassword.message}</FieldError>
-              )}
-              {showMatchSuccess ? (
+              ) : showMatchSuccess ? (
                 <FieldDescription className="text-green-600">
                   Passwords match.
                 </FieldDescription>
