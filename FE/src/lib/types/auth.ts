@@ -16,7 +16,7 @@ interface SignupSuccess {
 interface SignupFailure {
   success: false;
   message: string;
-  FieldErrors?: Record<string, string[] | undefined>;
+  fieldErrors?: Record<string, string[] | undefined>;
 }
 
 export type SignupReturn = SignupSuccess | SignupFailure;
