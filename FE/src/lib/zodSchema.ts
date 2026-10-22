@@ -31,7 +31,7 @@ export const userSchema = z
     email: z.string().email({ message: "incorrect email format!" }),
     shareable: z.boolean().default(true).optional(),
   })
-  .refine((data) => data.password !== data.confirmPassword, {
+  .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match!",
     path: ["confirmPassword"],
   });
